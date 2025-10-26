@@ -1,0 +1,95 @@
+Index: Models/TodoItem.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>namespace TodoApi.Models;\r\n\r\npublic class TodoItem\r\n{\r\n    public long Id { get; set; }\r\n    public string? Name { get; set; }\r\n    public bool IsComplete { get; set; }\r\n    public string? Secret { get; set; }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Models/TodoItem.cs b/Models/TodoItem.cs
+--- a/Models/TodoItem.cs	(revision 3cc1e830ae085deb31640464fd177e7b462ed0e9)
++++ b/Models/TodoItem.cs	(date 1761477891831)
+@@ -6,4 +6,6 @@
+     public string? Name { get; set; }
+     public bool IsComplete { get; set; }
+     public string? Secret { get; set; }
++    public DateTime Created { get; set; }
++    public DateTime? Updated { get; set; }
+ }
+Index: Models/TodoItemDTO.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>namespace TodoApi.Models;\r\n\r\npublic class TodoItemDTO\r\n{\r\n    public long Id { get; set; }\r\n    public string? Name { get; set; }\r\n    public bool IsComplete { get; set; }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Models/TodoItemDTO.cs b/Models/TodoItemDTO.cs
+--- a/Models/TodoItemDTO.cs	(revision 3cc1e830ae085deb31640464fd177e7b462ed0e9)
++++ b/Models/TodoItemDTO.cs	(date 1761477891823)
+@@ -5,4 +5,6 @@
+     public long Id { get; set; }
+     public string? Name { get; set; }
+     public bool IsComplete { get; set; }
++    public DateTime Created { get; set; }
++    public DateTime? Updated { get; set; }
+ }
+Index: Models/TodoContext.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>using Microsoft.EntityFrameworkCore;\r\n\r\nnamespace TodoApi.Models;\r\n\r\npublic class TodoContext : DbContext\r\n{\r\n    public TodoContext(DbContextOptions<TodoContext> options)\r\n        : base(options)\r\n    {\r\n    }\r\n\r\n    public DbSet<TodoItem> TodoItems { get; set; } = null!;\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Models/TodoContext.cs b/Models/TodoContext.cs
+--- a/Models/TodoContext.cs	(revision 3cc1e830ae085deb31640464fd177e7b462ed0e9)
++++ b/Models/TodoContext.cs	(date 1761479714680)
+@@ -7,6 +7,12 @@
+     public TodoContext(DbContextOptions<TodoContext> options)
+         : base(options)
+     {
++        
++    }
++
++    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
++    {
++        optionsBuilder.UseSqlServer("jdbc:postgresql://localhost:5432/postgres");
+     }
+ 
+     public DbSet<TodoItem> TodoItems { get; set; } = null!;
+Index: TodoApiDTO.csproj
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><Project Sdk=\"Microsoft.NET.Sdk.Web\">\r\n\r\n  <PropertyGroup>\r\n    <TargetFramework>net9.0</TargetFramework>\r\n    <Nullable>enable</Nullable>\r\n    <ImplicitUsings>enable</ImplicitUsings>\r\n  </PropertyGroup>\r\n\r\n  <ItemGroup>\r\n    <PackageReference Include=\"Microsoft.AspNetCore.OpenApi\" Version=\"9.0.0\" />\r\n    <PackageReference Include=\"Microsoft.EntityFrameworkCore.InMemory\" Version=\"9.0.0\" />\r\n    <PackageReference Include=\"Microsoft.EntityFrameworkCore.SqlServer\" Version=\"9.0.0\" />\r\n    <PackageReference Include=\"Microsoft.EntityFrameworkCore.Tools\" Version=\"9.0.0\">\r\n      <PrivateAssets>all</PrivateAssets>\r\n      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>\r\n    </PackageReference>\r\n    <PackageReference Include=\"Microsoft.VisualStudio.Web.CodeGeneration.Design\" Version=\"9.0.0\" />\r\n  </ItemGroup>\r\n\r\n</Project>\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/TodoApiDTO.csproj b/TodoApiDTO.csproj
+--- a/TodoApiDTO.csproj	(revision 3cc1e830ae085deb31640464fd177e7b462ed0e9)
++++ b/TodoApiDTO.csproj	(date 1761480134765)
+@@ -15,6 +15,7 @@
+       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+     </PackageReference>
+     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0" />
++    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+   </ItemGroup>
+ 
+ </Project>
+Index: appsettings.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{\r\n  \"Logging\": {\r\n    \"LogLevel\": {\r\n      \"Default\": \"Information\",\r\n      \"Microsoft.AspNetCore\": \"Warning\"\r\n    }\r\n  },\r\n  \"AllowedHosts\": \"*\"\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/appsettings.json b/appsettings.json
+--- a/appsettings.json	(revision 3cc1e830ae085deb31640464fd177e7b462ed0e9)
++++ b/appsettings.json	(date 1761480280761)
+@@ -1,5 +1,8 @@
+ {
+-  "Logging": {
++  "ConnectionStrings": {
++    "TodoContext": "Host=localhost;Database=TodoDb;Username=postgres;Password=bobehu18"
++    },
++    "Logging": {
+     "LogLevel": {
+       "Default": "Information",
+       "Microsoft.AspNetCore": "Warning"
