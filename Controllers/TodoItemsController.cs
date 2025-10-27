@@ -53,7 +53,7 @@ public class TodoItemsController : ControllerBase
             todoItem.Name = updateDTO.Name;
         
         todoItem.IsComplete = updateDTO.IsComplete;
-        todoItem.UpdatedAt = DateTime.Now;
+        todoItem.UpdatedAt = DateTime.UtcNow;
 
         try
         {
