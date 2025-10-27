@@ -44,21 +44,16 @@ public class TodoItemsController : ControllerBase
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     // <snippet_Update>
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutTodoItem(long id, TodoItemDTO todoDTO)
+    public async Task<IActionResult> PutTodoItem(long id, TodoItemUpdateDTO updateDTO)
     {
-        if (id != todoDTO.Id)
-        {
-            return BadRequest();
-        }
-
         var todoItem = await _context.TodoItems.FindAsync(id);
-        if (todoItem == null)
-        {
-            return NotFound();
-        }
-
-        todoItem.Name = todoDTO.Name;
-        todoItem.IsComplete = todoDTO.IsComplete;
+        if (todoItem == null) return NotFound();
+        
+        if (!string.IsNullOrEmpty(updateDTO.Name)) 
+            todoItem.Name = updateDTO.Name;
+        
+        todoItem.IsComplete = updateDTO.IsComplete;
+        todoItem.UpdatedAt = DateTime.Now;
 
         try
         {
@@ -69,7 +64,7 @@ public class TodoItemsController : ControllerBase
             return NotFound();
         }
 
-        return NoContent();
+        return Ok(ItemToDTO(todoItem));
     }
     // </snippet_Update>
 
@@ -81,8 +76,8 @@ public class TodoItemsController : ControllerBase
     {
         var todoItem = new TodoItem
         {
-            IsComplete = todoDTO.IsComplete,
             Name = todoDTO.Name,
+            IsComplete = false,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = null,
             Synchronized = false
@@ -90,7 +85,7 @@ public class TodoItemsController : ControllerBase
 
         _context.TodoItems.Add(todoItem);
         await _context.SaveChangesAsync();
-        
+
         try
         {
             using var client = new HttpClient();
@@ -136,13 +131,13 @@ public class TodoItemsController : ControllerBase
     }
 
     private static TodoItemDTO ItemToDTO(TodoItem todoItem) =>
-       new TodoItemDTO
-       {
-           Id = todoItem.Id,
-           Name = todoItem.Name,
-           IsComplete = todoItem.IsComplete,
-           CreatedAt = todoItem.CreatedAt,
-           UpdatedAt = todoItem.UpdatedAt,
-           Synchronized = todoItem.Synchronized
-       };
+        new TodoItemDTO
+        {
+            Id = todoItem.Id,
+            Name = todoItem.Name,
+            IsComplete = todoItem.IsComplete,
+            CreatedAt = todoItem.CreatedAt,
+            UpdatedAt = todoItem.UpdatedAt,
+            Synchronized = todoItem.Synchronized
+        };
 }
