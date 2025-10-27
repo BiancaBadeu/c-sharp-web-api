@@ -1,0 +1,67 @@
+##############################
+# .NET / C# Build Artifacts
+##############################
+bin/
+obj/
+[Bb]uild/
+[Ll]og/
+[Tt]est[Rr]esult*/
+*.exe
+*.dll
+*.pdb
+*.cache
+*.tmp
+*.log
+
+##############################
+# User / IDE files
+##############################
+*.user
+*.rsuser
+*.suo
+*.userosscache
+*.sln.docstates
+
+##############################
+# JetBrains Rider / IntelliJ
+##############################
+.idea/
+*.iml
+*.ipr
+*.iws
+# Rider’s generated solution settings
+.idea/.idea.*
+.idea/shelf/
+.idea/workspace.xml
+.idea/httpRequests/
+
+##############################
+# Environment & Secrets
+##############################
+.env
+.env.*
+*.db
+*.sqlite
+appsettings.Development.json
+appsettings.Local.json
+appsettings.*.json.local
+
+# PostgreSQL local dump or connection settings
+*.sql
+pgdata/
+postgres_data/
+
+##############################
+# OS Files
+##############################
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+##############################
+# Misc
+##############################
+*.bak
+*.orig
+*.swp
