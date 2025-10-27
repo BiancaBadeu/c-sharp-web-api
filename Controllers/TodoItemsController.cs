@@ -124,6 +124,19 @@ public class TodoItemsController : ControllerBase
 
         return NoContent();
     }
+    
+    // GET: api/TodoItems/search?q=milk
+    [HttpGet("search")]
+    public async Task<ActionResult<IEnumerable<TodoItemDTO>>> SearchTodos([FromQuery] string q)
+    {
+        var results = await _context.TodoItems
+            .Where(todo => todo.Name != null && todo.Name.ToLower().Contains(q.ToLower()))
+            .Select(todo => ItemToDTO(todo))
+            .ToListAsync();
+
+        return Ok(results);
+    }
+
 
     private bool TodoItemExists(long id)
     {
