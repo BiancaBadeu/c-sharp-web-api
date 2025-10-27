@@ -82,11 +82,30 @@ public class TodoItemsController : ControllerBase
         var todoItem = new TodoItem
         {
             IsComplete = todoDTO.IsComplete,
-            Name = todoDTO.Name
+            Name = todoDTO.Name,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = null,
+            Synchronized = false
         };
 
         _context.TodoItems.Add(todoItem);
         await _context.SaveChangesAsync();
+        
+        try
+        {
+            using var client = new HttpClient();
+            var response = await client.PostAsJsonAsync("https://postman-echo.com/post", todoItem);
+            if (response.IsSuccessStatusCode)
+            {
+                todoItem.Synchronized = true;
+                await _context.SaveChangesAsync();
+            }
+        }
+        catch
+        {
+            todoItem.Synchronized = false;
+        }
+
 
         return CreatedAtAction(
             nameof(GetTodoItem),
@@ -121,6 +140,9 @@ public class TodoItemsController : ControllerBase
        {
            Id = todoItem.Id,
            Name = todoItem.Name,
-           IsComplete = todoItem.IsComplete
+           IsComplete = todoItem.IsComplete,
+           CreatedAt = todoItem.CreatedAt,
+           UpdatedAt = todoItem.UpdatedAt,
+           Synchronized = todoItem.Synchronized
        };
 }
