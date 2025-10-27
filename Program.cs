@@ -5,8 +5,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
-builder.Services.AddDbContext<TodoContext>(opt =>
-    opt.UseInMemoryDatabase("TodoList"));
+builder.Services.AddDbContext<TodoContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("TodoContext")));
 
 var app = builder.Build();
 
